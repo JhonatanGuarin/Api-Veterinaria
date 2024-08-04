@@ -57,7 +57,7 @@ module.exports = {
 
   registerUser: async (req, res) => {
     try {
-        const { name, lastName, birthdate, documentNumber, phone, mail, password, role } = req.body;
+        const { name, lastName, birthdate, documentNumber, phone, mail, password } = req.body;
 
         const verification = await TempVerification.findOne({ mail, isVerified: true });
         if (!verification) {

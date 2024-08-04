@@ -17,7 +17,7 @@ router.post('/', createUser);
 router.get('/', getAllUsers);
 
 // Ruta para obtener usuario por ID
-router.get('/:id', getUserProfile);
+router.get('/data', getUserProfile);
 
 // Ruta para actualizar un usuario por ID
 router.put('/:id', updateUserById);

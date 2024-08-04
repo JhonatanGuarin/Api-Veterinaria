@@ -23,18 +23,29 @@ module.exports = {
         }
       },
 
-      // Obtener un usuario por ID
-    getUserProfile : async (req, res) => {
-        try {
-        const user = await User.findById(req.params.id);
+    // Controlador para obtener el usuario autenticado
+    getUserProfile: async (req, res) => {
+      try {
+        const token = req.headers.authorization?.split(' ').pop();
+
+        if (!token) {
+          return res.status(401).json({ error: 'No se proporcionó token de autorización' });
+        }
+
+        const tokenData = await verifyToken(token);
+        const user = await User.findById(tokenData._id).populate('typeDocument');
+
         if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+          return res.status(404).send({ error: 'Usuario no encontrado' });
         }
-        res.status(200).json(user);
-        } catch (error) {
-        res.status(500).json({ message: error.message });
-        }
-     },
+
+        console.log('Usuario encontrado:', user); // Log para depuración
+        res.status(200).send(user);
+      } catch (err) {
+        console.error('Error al obtener perfil de usuario:', err); // Log para depuración
+        res.status(500).send({ error: 'Error al obtener perfil de usuario', details: err.message });
+      }
+    },
   
   // Actualizar un usuario por ID
   updateUserById : async (req, res) => {

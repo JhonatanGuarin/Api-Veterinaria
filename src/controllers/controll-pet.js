@@ -6,7 +6,7 @@ module.exports = {
 
     createPet : async (req, res) => {
         try {
-            const { name, species, breed, birthdate, gender, weight, color, allergies, dietaryRestrictions } = req.body;
+            const { name, photo, species, breed, birthdate, gender, weight, color, allergies, dietaryRestrictions } = req.body;
             const token = req.headers.authorization?.split(' ').pop();
     
             if (!token) {
@@ -30,6 +30,7 @@ module.exports = {
                 name,
                 species,
                 owner: userData._id,
+                ...(photo && { photo }),
                 ...(breed && { breed }),
                 ...(birthdate && { birthdate }),
                 ...(gender && { gender }),

@@ -1,0 +1,25 @@
+const vaccineSchema = new mongoose.Schema({
+    pet: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Pet',
+      required: true
+    },
+    vaccineType: {
+      type: String,
+      required: true
+    },
+    dateAdministered: {
+      type: Date,
+      default: Date.now
+    },
+    nextDueDate: Date,
+    
+    veterinarian: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Veterinarian'
+    }
+  });
+  
+  const vaccine = mongoose.model('Vaccine', vaccineSchema);
+
+  module.exports = vaccine;

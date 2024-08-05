@@ -19,7 +19,7 @@ const medicalHistorySchema = new mongoose.Schema({
   notes: String,
   veterinarian: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Veterinarian'
+    ref: 'Users'
   }
 });
 

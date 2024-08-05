@@ -15,7 +15,7 @@ const {
 router.post('/', createPet);
 router.get('/', getPets);
 router.get('/data', getPetsByUser);
-router.get('/documentNumber:', getPetsByUserDocument);
+router.get('/:documentNumber:', getPetsByUserDocument);
 router.put('/:id', updatePet);
 router.delete('/:id', deletePet);
 

@@ -6,26 +6,6 @@ const { verifyToken } = require('../helpers/generate-token');
 module.exports = {
     createAppointment: async (req, res) => {
         try {
-            const { date, time, process, pet } = req.body;
-            const token = req.headers.authorization?.split(' ')[1];
-
-            if (!token) {
-                return res.status(401).json({ error: 'No se proporcionó token de autorización' });
-            }
-
-            let tokenData;
-            try {
-                tokenData = await verifyToken(token);
-            } catch (error) {
-                console.error('Error verifying token:', error);
-                return res.status(401).json({ error: 'Token inválido o expirado' });
-            }
-
-            const userData = await User.findById(tokenData._id);
-
-            if (!userData) {
-                return res.status(404).json({ error: 'Usuario no encontrado' });
-            }
 
             // Verificar disponibilidad del horario y obtener el veterinario
             const schedule = await VeterinarySchedule.findOne({
@@ -43,7 +23,6 @@ module.exports = {
                 date: new Date(date),
                 time,
                 process,
-                owner: userData._id,
                 pet,
                 veterinarian: schedule.veterinarian,
                 status: 'Pendiente'

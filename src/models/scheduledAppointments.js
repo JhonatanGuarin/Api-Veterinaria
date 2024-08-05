@@ -14,12 +14,6 @@ const scheduledAppointmentsSchema = new mongoose.Schema({
         required: true
     },
 
-    owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Users', 
-        required: true
-    },
-
     pet: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Pets',

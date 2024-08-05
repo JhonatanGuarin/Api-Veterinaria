@@ -47,19 +47,33 @@ module.exports = {
       }
     },
   
-  // Actualizar un usuario por ID
-  updateUserById : async (req, res) => {
-    try {
-      const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      if (!updatedUser) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+    // Actualizar un usuario por ID
+    updateUserById: async (req, res) => {
+      try {
+        const token = req.headers.authorization?.split(' ').pop();
+    
+        if (!token) {
+          return res.status(401).json({ error: 'No se proporcionó token de autorización' });
+        }
+    
+        const tokenData = await verifyToken(token);
+        
+        const updatedUser = await User.findByIdAndUpdate(
+          tokenData._id,
+          req.body,
+          { new: true }
+        );
+    
+        if (!updatedUser) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+    
+        res.status(200).json(updatedUser);
+      } catch (error) {
+        res.status(400).json({ message: error.message });
       }
-      res.status(200).json(updatedUser);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  },
-  
+    },
+
   // Eliminar un usuario por ID
   deleteUserById : async (req, res) => {
     try {

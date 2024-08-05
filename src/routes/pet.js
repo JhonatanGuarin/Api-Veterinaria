@@ -4,7 +4,8 @@ const router = express.Router();
 const { 
     createPet, 
     getPets, 
-    getPet, 
+    getPetsByUser,
+    getPetsByUserDocument,
     updatePet, 
     deletePet 
 } = require('../controllers/controll-pet')
@@ -12,9 +13,10 @@ const {
 
 
 router.post('/', createPet);
-router.get('/pets', getPets);
-router.get('/pets/:id', getPet);
-router.put('/pets/:id', updatePet);
-router.delete('/pets/:id', deletePet);
+router.get('/', getPets);
+router.get('/data', getPetsByUser);
+router.get('/documentNumber:', getPetsByUserDocument);
+router.put('/:id', updatePet);
+router.delete('/:id', deletePet);
 
 module.exports = router;

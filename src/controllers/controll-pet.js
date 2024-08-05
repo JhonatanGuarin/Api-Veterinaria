@@ -64,19 +64,51 @@ module.exports = {
         }
     },
     
-    getPet : async (req, res) => {
+    getPetsByUser: async (req, res) => {
         try {
-            const { id } = req.params;
-            const pet = await Pet.findById(id);
+            const token = req.headers.authorization?.split(' ').pop();
     
-            if (!pet) {
-                return res.status(404).json({ error: 'Mascota no encontrada' });
+            if (!token) {
+                return res.status(401).json({ error: 'No se proporcionó token de autorización' });
             }
     
-            res.status(200).json(pet);
+            const tokenData = await verifyToken(token);
+            
+            const pets = await Pet.find({ owner: tokenData._id });
+    
+            if (pets.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron mascotas para este usuario' });
+            }
+    
+            res.status(200).json(pets);
         } catch (error) {
-            console.error('Error al obtener la mascota:', error);
-            res.status(500).json({ error: 'Error al obtener la mascota' });
+            console.error('Error al obtener las mascotas del usuario:', error);
+            res.status(500).json({ error: 'Error al obtener las mascotas del usuario' });
+        }
+    },
+    
+    getPetsByUserDocument: async (req, res) => {
+        try {
+            const { documentNumber } = req.params;
+    
+            // Primero, encontramos al usuario por su número de documento
+            const user = await User.findOne({ documentNumber: parseInt(documentNumber) });
+    
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+    
+            // Luego, buscamos las mascotas asociadas a este usuario
+            const pets = await Pet.find({ owner: user._id });
+    
+            if (pets.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron mascotas para este usuario' });
+            }
+    
+            res.status(200).json(pets);
+        } catch (error) {
+            console.error('Error al obtener las mascotas del usuario:', error);
+            res.status(500).json({ error: 'Error al obtener las mascotas del usuario' });
         }
     },
     

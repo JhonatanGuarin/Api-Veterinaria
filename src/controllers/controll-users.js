@@ -1,5 +1,5 @@
 const User = require('../models/user'); // Asegúrate de tener este modelo definido
-
+const { verifyToken } = require('../helpers/generate-token')
 
 module.exports = {
     // Crear un nuevo usuario
@@ -33,7 +33,7 @@ module.exports = {
         }
 
         const tokenData = await verifyToken(token);
-        const user = await User.findById(tokenData._id).populate('typeDocument');
+        const user = await User.findById(tokenData._id)
 
         if (!user) {
           return res.status(404).send({ error: 'Usuario no encontrado' });

@@ -57,7 +57,7 @@ module.exports = {
 
   registerUser: async (req, res) => {
     try {
-        const { name, lastName, birthdate, documentNumber, phone, mail, password } = req.body;
+        const { name, lastName, birthdate, documentNumber, phone, mail, password, role } = req.body;
 
         const verification = await TempVerification.findOne({ mail, isVerified: true });
         if (!verification) {
@@ -103,7 +103,8 @@ module.exports = {
 
         return res.status(201).json({ data: result });
     } catch (err) {
-        return res.status(500).json({ error: 'Error al registrar el usuario' });
+        console.error('Error al registrar el usuario:', err); // Registra el error en la consola
+        return res.status(500).json({ error: `Error al registrar el usuario: ${err.message}` });
     }
   },
 

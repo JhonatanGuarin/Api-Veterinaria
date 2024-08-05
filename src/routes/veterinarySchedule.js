@@ -4,7 +4,8 @@ const router = express.Router();
 const {
     createveterinarySchedule,
     removeTimeSlots,
-    getTimeSlots
+    getTimeSlots,
+    getAllVeterinarianTimeSlots
 } = require('../controllers/controll-veterinarySchedule');
 
 router.post('/', createveterinarySchedule);
@@ -13,5 +14,7 @@ router.post('/', createveterinarySchedule);
 router.post('/remove-time-slots', removeTimeSlots);
 
 // Ruta para obtener los horarios
-router.get('/time-slots', getTimeSlots);  
+router.get('/time-slots', getTimeSlots); 
+
+router.get('/all-timeslots', getAllVeterinarianTimeSlots);
 module.exports = router;

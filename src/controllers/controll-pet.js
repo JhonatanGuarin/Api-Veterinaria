@@ -88,30 +88,29 @@ module.exports = {
     },
     
     getPetsByUserDocument: async (req, res) => {
-        try {
-            const { documentNumber } = req.params;
-    
-            // Primero, encontramos al usuario por su número de documento
-            const user = await User.findOne({ documentNumber: parseInt(documentNumber) });
-    
-            if (!user) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
-            }
-    
-            // Luego, buscamos las mascotas asociadas a este usuario
-            const pets = await Pet.find({ owner: user._id });
-    
-            if (pets.length === 0) {
-                return res.status(404).json({ message: 'No se encontraron mascotas para este usuario' });
-            }
-    
-            res.status(200).json(pets);
-        } catch (error) {
-            console.error('Error al obtener las mascotas del usuario:', error);
-            res.status(500).json({ error: 'Error al obtener las mascotas del usuario' });
+    try {
+        const { documentNumber } = req.params;
+
+        // Primero, encontramos al usuario por su número de documento
+        const user = await User.findOne({ documentNumber: parseInt(documentNumber) });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-    },
-    
+
+        // Luego, buscamos las mascotas asociadas a este usuario
+        const pets = await Pet.find({ owner: user._id });
+
+        if (pets.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron mascotas para este usuario' });
+        }
+
+        res.status(200).json(pets);
+    } catch (error) {
+        console.error('Error al obtener las mascotas del usuario:', error);
+        res.status(500).json({ error: 'Error al obtener las mascotas del usuario' });
+    }
+},
     updatePet : async (req, res) => {
         try {
             const { id } = req.params;

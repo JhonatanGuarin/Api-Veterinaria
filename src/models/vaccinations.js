@@ -13,10 +13,10 @@ const vaccineSchema = new mongoose.Schema({
       default: Date.now
     },
     nextDueDate: Date,
-    
+
     veterinarian: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Veterinarian'
+      ref: 'Users'
     }
   });
   

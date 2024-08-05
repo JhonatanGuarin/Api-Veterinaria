@@ -8,9 +8,9 @@ const veterinaryScheduleSchema = new mongoose.Schema({
 
   veterinarian: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Veterinarian'
+    ref: 'Users'
   },
-  
+
   timeSlots: [
     {
       time: {

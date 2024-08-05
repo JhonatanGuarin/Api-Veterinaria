@@ -3,15 +3,16 @@ const User = require('../models/user');
 const { verifyToken } = require('../helpers/generate-token');
 
 module.exports = {
+    
     createveterinarySchedule: async (req, res) => {
         try {
             const { date, timeSlots } = req.body;
-            const token = req.headers.authorization?.split(' ')[1]; // Cambiado de .pop() a [1]
-
+            const token = req.headers.authorization?.split(' ')[1];
+    
             if (!token) {
                 return res.status(401).json({ error: 'No se proporcionó token de autorización' });
             }
-
+    
             let tokenData;
             try {
                 tokenData = await verifyToken(token);
@@ -19,35 +20,47 @@ module.exports = {
                 console.error('Error verifying token:', error);
                 return res.status(401).json({ error: 'Token inválido o expirado' });
             }
-
+    
             const userData = await User.findById(tokenData._id);
-
+    
             if (!userData || userData.role !== 'Admin') {
                 return res.status(403).json({ error: 'No autorizado para crear horarios' });
             }
-
+    
             const selectedDate = new Date(date);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-
+    
             if (selectedDate < today) {
                 return res.status(400).json({ message: 'No se pueden crear horarios para fechas pasadas' });
             }
-
+    
             let schedule = await VeterinarySchedule.findOne({ 
                 date: selectedDate.toISOString().split('T')[0],
                 veterinarian: userData._id
             });
-
+    
             if (schedule) {
-                // Si existe, agregamos los nuevos horarios
+                // Verificar si alguno de los nuevos horarios ya existe
+                const existingTimes = new Set(schedule.timeSlots.map(slot => slot.time));
+                const duplicateSlots = timeSlots.filter(slot => existingTimes.has(slot));
+    
+                if (duplicateSlots.length > 0) {
+                    return res.status(400).json({ 
+                        message: 'No se pueden agregar horarios duplicados: ' + duplicateSlots.join(', '),
+                        duplicateSlots: duplicateSlots 
+                    });
+                }
+            }
+    
+            // Si no hay duplicados, procedemos a crear o actualizar el horario
+            if (schedule) {
                 schedule.timeSlots.push(...timeSlots.map(slot => ({
                     time: slot,
                     available: true,
                     status: "Libre"
                 })));
             } else {
-                // Si no existe, crear un nuevo registro
                 schedule = new VeterinarySchedule({
                     date: selectedDate,
                     veterinarian: userData._id,
@@ -58,7 +71,7 @@ module.exports = {
                     }))
                 });
             }
-
+    
             const savedSchedule = await schedule.save();
             console.log('Horario guardado:', savedSchedule);
             res.status(201).json(savedSchedule);
@@ -67,18 +80,33 @@ module.exports = {
             res.status(400).json({ message: error.message });
         }
     },
+    
+    
 
     getTimeSlots: async (req, res) => {
-        const { date } = req.query;
+        const { date, veterinarian } = req.query;
     
         try {
-            const schedule = await VeterinarySchedule.findOne({ date: new Date(date).toISOString().split('T')[0] });
+            let query = { date: new Date(date).toISOString().split('T')[0] };
+            if (veterinarian) {
+                query.veterinarian = veterinarian;
+            }
     
-            if (!schedule) {
+            const schedules = await VeterinarySchedule.find(query).populate('veterinarian', 'name');
+    
+            if (!schedules || schedules.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron horarios para esta fecha' });
             }
     
-            const availableTimeSlots = schedule.timeSlots.filter(slot => slot.status === "Libre");
+            const availableTimeSlots = schedules.flatMap(schedule => 
+                schedule.timeSlots
+                    .filter(slot => slot.status === "Libre")
+                    .map(slot => ({
+                        ...slot.toObject(),
+                        veterinarian: schedule.veterinarian.name
+                    }))
+            );
+    
             res.status(200).json({ timeSlots: availableTimeSlots });
         } catch (error) {
             console.error('Error al obtener los horarios:', error);

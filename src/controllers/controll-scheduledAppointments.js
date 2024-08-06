@@ -7,7 +7,7 @@ const { verifyToken } = require('../helpers/generate-token');
 module.exports = {
     createAppointment: async (req, res) => {
         try {
-            const { date, time, process, petId, veterinarian } = req.body;
+            const { date, time, appointmentType, specificProcess, observations, petId, veterinarian } = req.body;
     
             // Verificar si la mascota existe
             const pet = await Pet.findById(petId);
@@ -39,7 +39,9 @@ module.exports = {
             const newAppointment = new ScheduledAppointments({
                 date: new Date(date),
                 time,
-                process,
+                appointmentType,
+                specificProcess,
+                observations,
                 pet: petId,
                 veterinarian: veterinarianId,
                 status: 'Pendiente'

@@ -9,22 +9,28 @@ const scheduledAppointmentsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    process: {
+    appointmentType: {
+        type: String,
+        enum: ['Proceso Clínico', 'Vacunación'],
+        required: true
+    },
+    specificProcess: {
         type: String,
         required: true
     },
-
+    observations: {
+        type: String,
+        default: ''
+    },
     pet: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Pets',
         required: true
     },
-
     veterinarian: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Users'
-      },
-    
+    },
     status: {
         type: String,
         default: 'Pendiente'

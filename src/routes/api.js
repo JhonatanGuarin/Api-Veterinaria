@@ -10,6 +10,6 @@ const { getUserData,
 
 
 router.get('/user', checkAuth, getUserData);
-router.get('/admin', checkAuth, checkRoleAuth(['admin']), getAdminData);
+router.get('/admin', checkAuth, getAdminData);
 
 module.exports = router;

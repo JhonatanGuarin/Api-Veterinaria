@@ -39,5 +39,23 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ message: 'Error al registrar la vacuna', error: error.message });
         }
+    },
+
+    getVaccinesByPetId: async (req, res) => {
+        try {
+            const { petId } = req.params;
+
+            const vaccines = await Vaccine.find({ pet: petId })
+                .populate('veterinarian', 'name email')
+                .sort({ dateAdministered: -1 });
+
+            if (!vaccines.length) {
+                return res.status(404).json({ message: 'No se encontraron vacunas para esta mascota' });
+            }
+
+            res.status(200).json(vaccines);
+        } catch (error) {
+            res.status(500).json({ message: 'Error al buscar las vacunas', error: error.message });
+        }
     }
 };

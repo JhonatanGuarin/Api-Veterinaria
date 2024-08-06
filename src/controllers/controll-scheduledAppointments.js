@@ -91,28 +91,29 @@ module.exports = {
             if (!token) {
                 return res.status(401).json({ error: 'No se proporcionó token de autorización' });
             }
-
+    
             const tokenData = await verifyToken(token);
             const userData = await User.findById(tokenData._id);
-
+    
             if (!userData) {
                 return res.status(404).json({ error: 'Usuario no encontrado' });
             }
-
-            // Buscar citas de Proceso Clínico para este veterinario
+    
+            // Buscar citas de Proceso Clínico para este veterinario con estado Pendiente
             const appointments = await ScheduledAppointments.find({
                 appointmentType: 'Proceso Clínico',
-                veterinarian: userData._id
+                veterinarian: userData._id,
+                status: 'Pendiente'  // Agregamos esta condición
             }).populate('owner', 'name email')
               .populate('pet', 'name species');
-
+    
             res.status(200).json(appointments);
         } catch (error) {
             console.error('Error al obtener citas de Proceso Clínico:', error);
             res.status(500).json({ message: 'Error al obtener citas', error: error.message });
         }
     },
-
+    
     getVaccination: async (req, res) => {
         try {
             // Verificar y obtener el usuario del token
@@ -120,28 +121,28 @@ module.exports = {
             if (!token) {
                 return res.status(401).json({ error: 'No se proporcionó token de autorización' });
             }
-
+    
             const tokenData = await verifyToken(token);
             const userData = await User.findById(tokenData._id);
-
+    
             if (!userData) {
                 return res.status(404).json({ error: 'Usuario no encontrado' });
             }
-
-            // Buscar citas de Vacunación para este veterinario
+    
+            // Buscar citas de Vacunación para este veterinario con estado Pendiente
             const appointments = await ScheduledAppointments.find({
                 appointmentType: 'Vacunación',
-                veterinarian: userData._id
+                veterinarian: userData._id,
+                status: 'Pendiente'  // Agregamos esta condición
             }).populate('owner', 'name email')
               .populate('pet', 'name species');
-
+    
             res.status(200).json(appointments);
         } catch (error) {
             console.error('Error al obtener citas de Vacunación:', error);
             res.status(500).json({ message: 'Error al obtener citas', error: error.message });
         }
     },
-
     deleteAppointment : async (req, res) => {
         try {
             const { id } = req.params;

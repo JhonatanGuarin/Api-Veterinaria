@@ -148,5 +148,22 @@ module.exports = {
             console.error('Error al eliminar la mascota:', error);
             res.status(500).json({ error: 'Error al eliminar la mascota' });
         }
-    }
+    },
+
+    getPetById: async (req, res) => {
+        try {
+            const { id } = req.params;
+            
+            const pet = await Pet.findById(id);
+    
+            if (!pet) {
+                return res.status(404).json({ error: 'Mascota no encontrada' });
+            }
+    
+            res.status(200).json(pet);
+        } catch (error) {
+            console.error('Error al obtener la mascota por ID:', error);
+            res.status(500).json({ error: 'Error al obtener la mascota por ID' });
+        }
+    },
 }

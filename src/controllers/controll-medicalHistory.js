@@ -48,8 +48,9 @@ module.exports = {
             const { petId } = req.params;
 
             const medicalHistory = await MedicalHistory.find({ pet: petId })
-                .populate('veterinarian', 'name email')
-                .sort({ date: -1 });
+            .populate('veterinarian', 'name email')
+            .populate('pet', 'name')
+            .sort({ date: -1 });
 
             if (!medicalHistory.length) {
                 return res.status(404).json({ message: 'No se encontró historial médico para esta mascota' });

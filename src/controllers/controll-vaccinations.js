@@ -42,21 +42,23 @@ module.exports = {
         }
     },
 
-    getVaccinesByPetId : async (req, res) => {
+    getVaccinesByPetId: async (req, res) => {
         try {
-          const petId = req.params.petId;
-          console.log('Pet ID:', petId);
-      
-          const vaccines = await Vaccine.find({ pet: petId }).populate('veterinarian');
-          console.log('Vaccines:', vaccines);
-      
-          if (!vaccines || vaccines.length === 0) {
+            const petId = req.params.petId;
+
+            const vaccines = await Vaccine.find({ pet: petId })
+            .populate('veterinarian', 'name email')
+            .populate('pet', 'name')
+            .sort({ date: -1 });
+
+            if (!vaccines || vaccines.length === 0) {
             return res.status(404).json({ message: 'No se encontraron vacunas para esta mascota.' });
-          }
-      
-          res.status(200).json(vaccines);
+            }
+
+            res.status(200).json(vaccines);
         } catch (error) {
-          console.error(error);
-          res.status(500).json({ message: 'Error al buscar las vacunas.' });
+            console.error(error);
+            res.status(500).json({ message: 'Error al buscar las vacunas.' });
         }
-}};
+    },
+}

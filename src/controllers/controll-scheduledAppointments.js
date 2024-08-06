@@ -145,7 +145,7 @@ module.exports = {
     deleteAppointment : async (req, res) => {
         try {
             const { id } = req.params;
-            const result = await ScheduledAppointment.findByIdAndDelete(id);
+            const result = await ScheduledAppointments.findByIdAndDelete(id);
     
             if (!result) {
                 return res.status(404).json({ message: 'Cita no encontrada' });

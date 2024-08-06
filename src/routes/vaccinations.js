@@ -8,6 +8,6 @@ const {
 
 
 router.post('/', createVaccine);
-router.get('/:id', getVaccinesByPetId);
+router.get('/:petId', getVaccinesByPetId);
 
 module.exports = router;

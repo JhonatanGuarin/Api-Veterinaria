@@ -9,6 +9,6 @@ const {
 
 router.post('/', createMedicalHistory);
 
-router.get('/:id', getMedicalHistoryByPetId);
+router.get('/:petId', getMedicalHistoryByPetId);
 
 module.exports = router;

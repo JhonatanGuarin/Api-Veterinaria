@@ -2,6 +2,7 @@ const Vaccine = require('../models/vaccinations');
 const ScheduledAppointment = require('../models/scheduledAppointments');
 const { verifyToken } = require('../helpers/generate-token');
 const User = require('../models/user');
+const Pet = require('../models/pet');
 
 module.exports = {
     createVaccine: async (req, res) => {
@@ -41,21 +42,21 @@ module.exports = {
         }
     },
 
-    getVaccinesByPetId: async (req, res) => {
+    getVaccinesByPetId : async (req, res) => {
         try {
-            const { petId } = req.params;
-
-            const vaccines = await Vaccine.find({ pet: petId })
-                .populate('veterinarian', 'name email')
-                .sort({ dateAdministered: -1 });
-
-            if (!vaccines.length) {
-                return res.status(404).json({ message: 'No se encontraron vacunas para esta mascota' });
-            }
-
-            res.status(200).json(vaccines);
+          const petId = req.params.petId;
+          console.log('Pet ID:', petId);
+      
+          const vaccines = await Vaccine.find({ pet: petId }).populate('veterinarian');
+          console.log('Vaccines:', vaccines);
+      
+          if (!vaccines || vaccines.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron vacunas para esta mascota.' });
+          }
+      
+          res.status(200).json(vaccines);
         } catch (error) {
-            res.status(500).json({ message: 'Error al buscar las vacunas', error: error.message });
+          console.error(error);
+          res.status(500).json({ message: 'Error al buscar las vacunas.' });
         }
-    }
-};
+}};

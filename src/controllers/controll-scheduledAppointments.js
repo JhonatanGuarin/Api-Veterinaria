@@ -140,6 +140,21 @@ module.exports = {
             console.error('Error al obtener citas de Vacunación:', error);
             res.status(500).json({ message: 'Error al obtener citas', error: error.message });
         }
+    },
+
+    deleteAppointment : async (req, res) => {
+        try {
+            const { id } = req.params;
+            const result = await ScheduledAppointment.findByIdAndDelete(id);
+    
+            if (!result) {
+                return res.status(404).json({ message: 'Cita no encontrada' });
+            }
+    
+            res.status(200).json({ message: 'Cita eliminada con éxito' });
+        } catch (error) {
+            res.status(500).json({ message: 'Error al eliminar la cita', error: error.message });
+        }
     }
 
 

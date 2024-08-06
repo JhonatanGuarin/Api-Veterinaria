@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const vaccineSchema = new mongoose.Schema({
     pet: {
       type: mongoose.Schema.Types.ObjectId,
